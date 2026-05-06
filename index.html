@@ -8,137 +8,122 @@
 </head>
 <body>
 
-    <div class="wiki-container">
-        <!-- LEWY PANEL: PRZYCISKI -->
-        <nav class="game-sidebar">
-            <h2 class="sidebar-title">// WYBIERZ GRĘ</h2>
-            <div id="game-buttons">
-                <!-- Tu wskoczą przyciski z JavaScriptu -->
+    <!-- Główny układ strony -->
+    <div class="wiki-layout">
+        
+        <!-- PASEK BOCZNY (ZAKŁADKA) -->
+        <nav class="main-sidebar">
+            <button class="nav-toggle-btn" onclick="toggleGameList()">
+                <span class="icon">🎮</span>
+                <span class="label">GRY</span>
+            </button>
+            <div id="game-list-overlay" class="game-list-panel">
+                <h3>Wybierz tytuł:</h3>
+                <div id="game-buttons-container">
+                    <!-- Przyciski gier wygenerowane przez JS -->
+                </div>
             </div>
         </nav>
 
-        <!-- PRAWY PANEL: TWOJA KARTA -->
-        <main class="card-display">
-            <div class="game-card">
+        <!-- OBSZAR WYŚWIETLANIA KARTY -->
+        <main class="card-display-area" onclick="closeGameList()">
+            <div class="game-card" id="active-card">
                 
                 <div class="card-header">
                     <div class="title-section">
-                        <h1 id="view-title">Dishonored 2</h1>
-                        <p id="view-version" class="subtitle">Wersja: Xbox One (Graj we wstecznej na Series X)</p>
+                        <h1 id="v-title">Xbox Performance Wiki</h1>
+                        <p id="v-version" class="subtitle">Wybierz grę z menu po lewej</p>
                     </div>
-                    <div id="view-badge" class="status-badge badge-red">Bad Controls</div>
+                    <div id="v-badge" class="status-badge badge-green">Ready</div>
                 </div>
 
                 <div class="stats-grid">
                     <div class="stat-box">
                         <span class="stat-label">Input Lag</span>
-                        <span id="view-lag" class="stat-value text-red underline">Heavy</span>
+                        <span id="v-lag" class="stat-value">--</span>
                     </div>
                     <div class="stat-box">
                         <span class="stat-label">Framerate</span>
-                        <span id="view-fps" class="stat-value text-green">60 FPS</span>
-                        <span id="view-fps-sub" class="stat-sub">(via FPS Boost)</span>
+                        <span id="v-fps" class="stat-value">--</span>
                     </div>
                     <div class="stat-box">
                         <span class="stat-label">Deadzone</span>
-                        <span id="view-deadzone" class="stat-value text-yellow">Large</span>
+                        <span id="v-deadzone" class="stat-value">--</span>
                     </div>
                 </div>
 
                 <div class="card-body">
-                    <section>
-                        <h2 class="section-title text-green">// Problemy Techniczne</h2>
-                        <p id="view-desc">Sterowanie wydaje się "pływające". Kamera reaguje z zauważalnym opóźnieniem w stosunku do ruchu gałki.</p>
-                    </section>
-
-                    <section class="fix-box">
-                        <h2 class="section-title text-green-light">// Zalecane Ustawienia (Fix)</h2>
-                        <ul id="view-fix" class="fix-list">
-                            <li>Friction: <span class="code-tag">0</span></li>
-                            <li>Sensitivity: <span class="code-tag">40 / 60</span></li>
-                            <li>Włącz <span class="italic text-green-light">FPS Boost</span>!</li>
-                        </ul>
-                    </section>
+                    <h2 class="section-title text-green">// Status Projektu</h2>
+                    <p id="v-desc">Kliknij w ikonę pada po lewej, aby otworzyć listę przetestowanych gier.</p>
+                    
+                    <div id="v-fix-container" class="fix-box" style="display:none;">
+                        <h2 class="section-title text-green-light">// Zalecane Ustawienia</h2>
+                        <ul id="v-fix" class="fix-list"></ul>
+                    </div>
                 </div>
 
                 <div class="card-footer">
-                    <span>Ostatnia aktualizacja: 20.05.2024</span>
-                    <button class="btn-report">Zgłoś zmianę</button>
+                    <span>Ostatnia aktualizacja: 2024</span>
+                    <button class="btn-report">Zgłoś dane</button>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- BAZA DANYCH I OBSŁUGA STRONY -->
     <script>
         const db = {
-            "d2": {
-                title: "Dishonored 2",
-                version: "Xbox One (Back-Compat)",
-                badge: "Bad Controls",
-                badgeColor: "badge-red",
-                lag: "Heavy",
-                lagColor: "text-red",
-                fps: "60 FPS",
-                fpsSub: "(via FPS Boost)",
-                deadzone: "Large",
-                dzColor: "text-yellow",
-                desc: "Sterowanie wydaje się 'pływające'. Kamera reaguje z zauważalnym opóźnieniem w stosunku do ruchu gałki. Akceleracja widoku jest nieliniowa.",
-                fix: "<li>Friction: <span class='code-tag'>0</span></li><li>Sensitivity: <span class='code-tag'>40 / 60</span></li><li>Włącz <span class='italic text-green-light'>FPS Boost</span></li>"
+            "dishonored": {
+                title: "Dishonored 2", version: "Xbox One / Series X", badge: "Bad Controls", bColor: "badge-red",
+                lag: "Heavy", lagC: "text-red", fps: "60 FPS", dz: "Large", dzC: "text-yellow",
+                desc: "Pływające sterowanie i zauważalny lag.",
+                fix: "<li>Friction: 0</li><li>Sens: 40/60</li>"
             },
             "fh3": {
-                title: "Forza Horizon 3",
-                version: "Xbox One S (Standard)",
-                badge: "Playable",
-                badgeColor: "badge-yellow",
-                lag: "Moderate",
-                lagColor: "text-yellow",
-                fps: "30 FPS",
-                fpsSub: "(Zablokowane)",
-                deadzone: "Standard",
-                dzColor: "text-green",
-                desc: "Gra nie otrzymała wsparcia Series X, więc działa w trybie Xbox One S. 30 FPS jest stabilne, ale czuć opóźnienie typowe dla starszych gier wyścigowych.",
-                fix: "<li>Martwa strefa (wewn.): <span class='code-tag'>0</span></li><li>Martwa strefa (zewn.): <span class='code-tag'>100</span></li>"
+                title: "Forza Horizon 3", version: "Xbox One S", badge: "Playable", bColor: "badge-yellow",
+                lag: "Moderate", lagC: "text-yellow", fps: "30 FPS", dz: "Standard", dzC: "text-green",
+                desc: "Stabilne 30 klatek, odczuwalny lag w sterowaniu.",
+                fix: "<li>Deadzone: 0</li>"
             },
             "ac": {
-                title: "Assassin's Creed",
-                version: "Xbox 360 (Enhanced)",
-                badge: "Perfect",
-                badgeColor: "badge-green",
-                lag: "Low",
-                lagColor: "text-green",
-                fps: "60 FPS",
-                fpsSub: "(Auto HDR & Boost)",
-                deadzone: "Small",
-                dzColor: "text-green",
-                desc: "Dzięki ulepszeniom wstecznej kompatybilności, pierwsza część przygód Altaira działa w 4K przy 60 klatkach na sekundę.",
-                fix: "<li>Brak konieczności zmian. Gra działa idealnie.</li>"
+                title: "Assassin's Creed", version: "Xbox 360 Enhanced", badge: "Perfect", bColor: "badge-green",
+                lag: "Low", lagC: "text-green", fps: "60 FPS", dz: "Small", dzC: "text-green",
+                desc: "Idealna płynność i responsywność.",
+                fix: "<li>Brak zmian.</li>"
             }
         };
 
-        function switchGame(key) {
-            const g = db[key];
-            document.getElementById('view-title').innerText = g.title;
-            document.getElementById('view-version').innerText = "Wersja: " + g.version;
-            document.getElementById('view-badge').innerText = g.badge;
-            document.getElementById('view-badge').className = "status-badge " + g.badgeColor;
-            document.getElementById('view-lag').innerText = g.lag;
-            document.getElementById('view-lag').className = "stat-value underline " + g.lagColor;
-            document.getElementById('view-fps').innerText = g.fps;
-            document.getElementById('view-fps-sub').innerText = g.fpsSub;
-            document.getElementById('view-deadzone').innerText = g.deadzone;
-            document.getElementById('view-deadzone').className = "stat-value " + g.dzColor;
-            document.getElementById('view-desc').innerText = g.desc;
-            document.getElementById('view-fix').innerHTML = g.fix;
+        function toggleGameList() {
+            document.getElementById('game-list-overlay').classList.toggle('open');
         }
 
-        const btnContainer = document.getElementById('game-buttons');
-        for (let id in db) {
+        function closeGameList() {
+            document.getElementById('game-list-overlay').classList.remove('open');
+        }
+
+        function loadGame(id) {
+            const g = db[id];
+            document.getElementById('v-title').innerText = g.title;
+            document.getElementById('v-version').innerText = g.version;
+            document.getElementById('v-badge').innerText = g.badge;
+            document.getElementById('v-badge').className = "status-badge " + g.bColor;
+            document.getElementById('v-lag').innerText = g.lag;
+            document.getElementById('v-lag').className = "stat-value underline " + g.lagC;
+            document.getElementById('v-fps').innerText = g.fps;
+            document.getElementById('v-deadzone').innerText = g.dz;
+            document.getElementById('v-deadzone').className = "stat-value " + g.dzC;
+            document.getElementById('v-desc').innerText = g.desc;
+            document.getElementById('v-fix').innerHTML = g.fix;
+            document.getElementById('v-fix-container').style.display = "block";
+            closeGameList();
+        }
+
+        const container = document.getElementById('game-buttons-container');
+        for (let key in db) {
             let b = document.createElement('button');
-            b.className = "nav-button";
-            b.innerText = db[id].title;
-            b.onclick = () => switchGame(id);
-            btnContainer.appendChild(b);
+            b.className = "game-select-btn";
+            b.innerText = db[key].title;
+            b.onclick = (e) => { e.stopPropagation(); loadGame(key); };
+            container.appendChild(b);
         }
     </script>
 </body>
