@@ -3,127 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xbox Performance Wiki</title>
+    <title>Xbox Tech Wiki</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Główny układ strony -->
-    <div class="wiki-layout">
-        
-        <!-- PASEK BOCZNY (ZAKŁADKA) -->
-        <nav class="main-sidebar">
-            <button class="nav-toggle-btn" onclick="toggleGameList()">
-                <span class="icon">🎮</span>
-                <span class="label">GRY</span>
-            </button>
-            <div id="game-list-overlay" class="game-list-panel">
-                <h3>Wybierz tytuł:</h3>
-                <div id="game-buttons-container">
-                    <!-- Przyciski gier wygenerowane przez JS -->
+    <div class="app-wrapper">
+        <!-- LEWY PANEL: KATEGORIE -->
+        <aside class="sidebar">
+            <h2 class="sidebar-title">Categories</h2>
+            <nav class="categories-nav">
+                <!-- Zmieniona kolejność: Home na górze, Games poniżej -->
+                <button class="cat-btn" onclick="showView('home')">🏠 Home</button>
+                <button class="cat-btn" onclick="showView('games-list')">🎮 Games</button>
+            </nav>
+        </aside>
+
+        <!-- ŚRODKOWY PANEL: TREŚĆ -->
+        <main class="main-content">
+            
+            <!-- WIDOK: HOME -->
+            <div id="view-home" class="view">
+                <h1>Xbox Performance Wiki</h1>
+                <p>Witaj w bazie danych technicznych gier na konsole Xbox. Wybierz sekcję <strong>Games</strong>, aby zobaczyć listę przetestowanych tytułów.</p>
+                <div class="info-box">
+                    <h3>O projekcie</h3>
+                    <p>Analizujemy parametry takie jak Input Lag, Framerate oraz martwe strefy kontrolera, aby zapewnić najlepsze wrażenia z rozgrywki.</p>
                 </div>
             </div>
-        </nav>
 
-        <!-- OBSZAR WYŚWIETLANIA KARTY -->
-        <main class="card-display-area" onclick="closeGameList()">
-            <div class="game-card" id="active-card">
+            <!-- WIDOK: LISTA GIER -->
+            <div id="view-games-list" class="view" style="display: none;">
+                <h1>Gry Xbox</h1>
+                <p>Wybierz tytuł, aby zobaczyć szczegółowe statystyki techniczne:</p>
+                <div id="games-grid" class="games-grid">
+                    <!-- Przyciski gier generowane przez JavaScript -->
+                </div>
+            </div>
+
+            <!-- WIDOK: SZCZEGÓŁY GRY -->
+            <div id="view-game-detail" class="view" style="display: none;">
+                <button class="back-btn" onclick="showView('games-list')">← Powrót do listy</button>
                 
-                <div class="card-header">
-                    <div class="title-section">
-                        <h1 id="v-title">Xbox Performance Wiki</h1>
-                        <p id="v-version" class="subtitle">Wybierz grę z menu po lewej</p>
+                <div class="game-card">
+                    <div class="card-header">
+                        <div>
+                            <h1 id="g-title">Tytuł</h1>
+                            <p id="g-version" class="subtitle">Wersja</p>
+                        </div>
+                        <div id="g-badge" class="status-badge">---</div>
                     </div>
-                    <div id="v-badge" class="status-badge badge-green">Ready</div>
-                </div>
 
-                <div class="stats-grid">
-                    <div class="stat-box">
-                        <span class="stat-label">Input Lag</span>
-                        <span id="v-lag" class="stat-value">--</span>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <span class="label">Input Lag</span>
+                            <span id="g-lag" class="value">--</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="label">Framerate</span>
+                            <span id="g-fps" class="value">--</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="label">Deadzone</span>
+                            <span id="g-deadzone" class="value">--</span>
+                        </div>
                     </div>
-                    <div class="stat-box">
-                        <span class="stat-label">Framerate</span>
-                        <span id="v-fps" class="stat-value">--</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-label">Deadzone</span>
-                        <span id="v-deadzone" class="stat-value">--</span>
-                    </div>
-                </div>
 
-                <div class="card-body">
-                    <h2 class="section-title text-green">// Status Projektu</h2>
-                    <p id="v-desc">Kliknij w ikonę pada po lewej, aby otworzyć listę przetestowanych gier.</p>
-                    
-                    <div id="v-fix-container" class="fix-box" style="display:none;">
-                        <h2 class="section-title text-green-light">// Zalecane Ustawienia</h2>
-                        <ul id="v-fix" class="fix-list"></ul>
+                    <div class="card-body">
+                        <h2>// Analiza Techniczna</h2>
+                        <p id="g-desc">Opis...</p>
                     </div>
-                </div>
-
-                <div class="card-footer">
-                    <span>Ostatnia aktualizacja: 2024</span>
-                    <button class="btn-report">Zgłoś dane</button>
                 </div>
             </div>
+
         </main>
     </div>
 
     <script>
         const db = {
             "dishonored": {
-                title: "Dishonored 2", version: "Xbox One / Series X", badge: "Bad Controls", bColor: "badge-red",
-                lag: "Heavy", lagC: "text-red", fps: "60 FPS", dz: "Large", dzC: "text-yellow",
-                desc: "Pływające sterowanie i zauważalny lag.",
-                fix: "<li>Friction: 0</li><li>Sens: 40/60</li>"
+                t: "Dishonored 2", v: "Xbox One (Series X Boost)", b: "Bad Controls", bc: "badge-red",
+                lag: "Heavy", fps: "60 FPS", dz: "Large", desc: "Silny input lag i nieliniowa akceleracja gałek. Sterowanie wydaje się ociężałe."
             },
             "fh3": {
-                title: "Forza Horizon 3", version: "Xbox One S", badge: "Playable", bColor: "badge-yellow",
-                lag: "Moderate", lagC: "text-yellow", fps: "30 FPS", dz: "Standard", dzC: "text-green",
-                desc: "Stabilne 30 klatek, odczuwalny lag w sterowaniu.",
-                fix: "<li>Deadzone: 0</li>"
+                t: "Forza Horizon 3", v: "Xbox One S Mode", b: "Playable", bc: "badge-yellow",
+                lag: "Moderate", fps: "30 FPS", dz: "Standard", desc: "Brak ulepszeń FPS Boost. Gra działa w stabilnych 30 klatkach na sekundę."
             },
             "ac": {
-                title: "Assassin's Creed", version: "Xbox 360 Enhanced", badge: "Perfect", bColor: "badge-green",
-                lag: "Low", lagC: "text-green", fps: "60 FPS", dz: "Small", dzC: "text-green",
-                desc: "Idealna płynność i responsywność.",
-                fix: "<li>Brak zmian.</li>"
+                t: "Assassin's Creed", v: "Xbox 360 Enhanced", b: "Perfect", bc: "badge-green",
+                lag: "Low", fps: "60 FPS", dz: "Small", desc: "Działa w natywnym 4K przy 60 klatkach na sekundę. Bardzo responsywna."
             }
         };
 
-        function toggleGameList() {
-            document.getElementById('game-list-overlay').classList.toggle('open');
-        }
-
-        function closeGameList() {
-            document.getElementById('game-list-overlay').classList.remove('open');
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+            document.getElementById('view-' + viewId).style.display = 'block';
         }
 
         function loadGame(id) {
             const g = db[id];
-            document.getElementById('v-title').innerText = g.title;
-            document.getElementById('v-version').innerText = g.version;
-            document.getElementById('v-badge').innerText = g.badge;
-            document.getElementById('v-badge').className = "status-badge " + g.bColor;
-            document.getElementById('v-lag').innerText = g.lag;
-            document.getElementById('v-lag').className = "stat-value underline " + g.lagC;
-            document.getElementById('v-fps').innerText = g.fps;
-            document.getElementById('v-deadzone').innerText = g.dz;
-            document.getElementById('v-deadzone').className = "stat-value " + g.dzC;
-            document.getElementById('v-desc').innerText = g.desc;
-            document.getElementById('v-fix').innerHTML = g.fix;
-            document.getElementById('v-fix-container').style.display = "block";
-            closeGameList();
+            document.getElementById('g-title').innerText = g.t;
+            document.getElementById('g-version').innerText = g.v;
+            document.getElementById('g-badge').innerText = g.b;
+            document.getElementById('g-badge').className = "status-badge " + g.bc;
+            document.getElementById('g-lag').innerText = g.lag;
+            document.getElementById('g-fps').innerText = g.fps;
+            document.getElementById('g-deadzone').innerText = g.dz;
+            document.getElementById('g-desc').innerText = g.desc;
+            showView('game-detail');
         }
 
-        const container = document.getElementById('game-buttons-container');
+        const grid = document.getElementById('games-grid');
         for (let key in db) {
-            let b = document.createElement('button');
-            b.className = "game-select-btn";
-            b.innerText = db[key].title;
-            b.onclick = (e) => { e.stopPropagation(); loadGame(key); };
-            container.appendChild(b);
+            let item = document.createElement('div');
+            item.className = 'game-tile';
+            item.innerHTML = `<h3>${db[key].t}</h3><p>${db[key].v}</p>`;
+            item.onclick = () => loadGame(key);
+            grid.appendChild(item);
         }
     </script>
 </body>
